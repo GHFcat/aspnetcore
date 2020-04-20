@@ -63,6 +63,12 @@
           Condition=" '$(InProcessTestSite)' == 'true' AND '$(BuildIisNativeProjects)' == 'true' AND '$(TargetFrameworkIdentifier)' != '.NETFramework'"
           AfterTargets="GenerateBuildDependencyFile"
           DependsOnTargets="PrepareInjectionApp">
+    <ItemGroup>
+      <_TargetDirFiles Include="$([System.String]::Join(';', $([System.IO.Directory]::GetFiles('$(TargetDir)'))))" />
+    </ItemGroup>
+    <Message Importance="High" Text="InjectRequestHandler: %24(ProjectDepsFilePath) = $(ProjectDepsFilePath)" />
+    <Message Importance="High" Text="  @(_TargetDirFiles, '%0A  ')" />
+
     <Exec Command="$(InjectDepsApp) &quot;$(ProjectDepsFilePath)&quot; $(RuntimeIdentifier) " />
   </Target>
 
@@ -70,6 +76,14 @@
           Condition=" '$(InProcessTestSite)' == 'true' AND '$(BuildIisNativeProjects)' == 'true' AND '$(TargetFrameworkIdentifier)' != '.NETFramework'"
           AfterTargets="GeneratePublishDependencyFile"
           DependsOnTargets="PrepareInjectionApp">
+    <ItemGroup>
+      <_PublishDirFiles Include="$([System.String]::Join(';', $([System.IO.Directory]::GetFiles('$(PublishDir)'))))" />
+      <_IntermediateOutputPathFiles Include="$([System.String]::Join(';', $([System.IO.Directory]::GetFiles('$(IntermediateOutputPath)'))))" />
+    </ItemGroup>
+    <Message Importance="High" Text="InjectRequestHandlerOnPublish: %24(PublishDepsFilePath) = $(PublishDepsFilePath)" />
+    <Message Importance="High" Text="  @(_PublishDirFiles, '%0A  ')" />
+    <Message Importance="High" Text="  @(_IntermediateOutputPathFiles, '%0A  ')" />
+
     <Exec Command="$(InjectDepsApp) &quot;$(PublishDepsFilePath)&quot; $(RuntimeIdentifier) " />
   </Target>
 
